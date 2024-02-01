@@ -33,7 +33,6 @@ export async function getBookings({ filter, sortBy, page }) {
     throw new Error("Bookings could not be loader");
   }
 
-  console.log("Tttt", data, count);
   return { data, count };
 }
 export async function getBooking(id) {
@@ -131,5 +130,26 @@ export async function deleteBooking(id) {
     console.error(error);
     throw new Error("Booking could not be deleted");
   }
+  return data;
+}
+
+export async function createEditBooking(newBooking, id) {
+  let query = supabase.from("bookings");
+
+  if (!id) query = query.insert([{ ...newBooking }]);
+
+  if (id)
+    query = query
+      .update({ ...newBooking })
+      .eq("id", id)
+      .select();
+
+  const { data, error } = await query.select().single();
+
+  if (error) {
+    console.log("aaaa", error);
+    throw new Error("Booking could not be created or updated");
+  }
+
   return data;
 }

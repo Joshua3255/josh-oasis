@@ -50,7 +50,5 @@ export function useBookings() {
     });
   }
 
-  console.log("t1", "bookings=", bookings, "count=", count);
-
   return { isLoading, bookings, error, count };
 }

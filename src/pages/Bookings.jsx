@@ -2,6 +2,7 @@ import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import BookingTable from "../features/bookings/BookingTable";
 import BookingTableOperations from "../features/bookings/BookingTableOperations";
+import CreateBooking from "../features/bookings/CreateBooking";
 
 function Bookings() {
   return (
@@ -11,7 +12,10 @@ function Bookings() {
         <BookingTableOperations />
       </Row>
 
-      <BookingTable />
+      <Row>
+        <BookingTable />
+        <CreateBooking />
+      </Row>
     </>
   );
 }

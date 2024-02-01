@@ -204,6 +204,7 @@ img {
   filter: grayscale(var(--image-grayscale)) opacity(var(--image-opacity));
 }
 
+
 /*
 FOR DARK MODE
 
@@ -243,6 +244,20 @@ FOR DARK MODE
 --image-grayscale: 10%;
 --image-opacity: 90%;
 */
+
+.datePickerForCreateBooking{
+  border: 1px solid var(--color-grey-300);
+  background-color: var(--color-grey-0);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: 0.8rem 1.2rem;
+}
+
+.datePickerForCreateBooking input {
+  border:none;
+  background:white;
+  width:100%;
+}
 
 
 `;

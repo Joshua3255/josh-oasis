@@ -25,6 +25,13 @@ const StyledFormRow = styled.div`
     justify-content: flex-end;
     gap: 1.2rem;
   }
+
+  &:has(.react-datepicker-wrapper) {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 24rem 1fr 1.2fr;
+    gap: 2.4rem;
+  }
 `;
 
 const Label = styled.label`
