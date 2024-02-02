@@ -18,6 +18,8 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import { useDeleteBooking } from "./useDeleteBooking";
 import Empty from "../../ui/Empty";
+import CreateBookingForm from "./CreateBookingForm";
+import { BOOKINGSTATUS_TO_TAGNAME } from "../../utils/constants";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -37,18 +39,14 @@ function BookingDetail() {
 
   const { status, id: bookingId } = booking;
 
-  const statusToTagName = {
-    unconfirmed: "blue",
-    "checked-in": "green",
-    "checked-out": "silver",
-  };
-
   return (
     <>
       <Row type="horizontal">
         <HeadingGroup>
           <Heading as="h1">Booking #{bookingId}</Heading>
-          <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+          <Tag type={BOOKINGSTATUS_TO_TAGNAME[status]}>
+            {status.replace("-", " ")}
+          </Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>
@@ -75,6 +73,13 @@ function BookingDetail() {
           </Button>
         )}
         <Modal>
+          <Modal.Open opens="booking-form">
+            <Button>Edit booking</Button>
+          </Modal.Open>
+          <Modal.Window name="booking-form">
+            <CreateBookingForm bookingToEdit={booking} />
+          </Modal.Window>
+
           <Modal.Open opens="delete">
             <Button variation="danger">Delete booking</Button>
           </Modal.Open>
