@@ -1,22 +1,11 @@
 import { cloneElement, createContext, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 import { useOutsideClick } from "../hooks/useOutsideClick";
 
-const sizes = {
-  small: css``,
-  medium: css``,
-  large: css`
-    height: 95vh;
-  `,
-};
-
 const StyledModal = styled.div`
-  /* height: 95vh; */
-  ${(props) => sizes[props.size]}
-  overflow-y: auto;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -27,10 +16,6 @@ const StyledModal = styled.div`
   padding: 3.2rem 4rem;
   transition: all 0.5s;
 `;
-
-StyledModal.defaultProps = {
-  size: "medium",
-};
 
 const Overlay = styled.div`
   position: fixed;
@@ -70,14 +55,14 @@ const Button = styled.button`
 
 const ModalContext = createContext();
 
-function Modal({ children }) {
-  const [openName, setOpenName] = useState("");
+function ModalOverwarpped({ children }) {
+  const [openName2, setopenName2] = useState("");
 
-  const close = () => setOpenName("");
-  const open = setOpenName;
+  const close = () => setopenName2("");
+  const open = setopenName2;
 
   return (
-    <ModalContext.Provider value={{ openName, close, open }}>
+    <ModalContext.Provider value={{ openName2, close, open }}>
       {children}
     </ModalContext.Provider>
   );
@@ -89,8 +74,8 @@ function Open({ children, opens: opensWindowName }) {
   return cloneElement(children, { onClick: () => open(opensWindowName) });
 }
 
-function Window({ children, name, size = "medium" }) {
-  const { openName, close } = useContext(ModalContext);
+function Window({ children, name }) {
+  const { openName2, close } = useContext(ModalContext);
 
   // const ref = useRef();
 
@@ -110,11 +95,11 @@ function Window({ children, name, size = "medium" }) {
 
   const { ref } = useOutsideClick(close);
 
-  if (name !== openName) return null;
+  if (name !== openName2) return null;
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={ref} size={size}>
+      <StyledModal ref={ref}>
         <Button onClick={close}>
           <HiXMark />
         </Button>
@@ -125,7 +110,7 @@ function Window({ children, name, size = "medium" }) {
   );
 }
 
-Modal.Open = Open;
-Modal.Window = Window;
+ModalOverwarpped.Open = Open;
+ModalOverwarpped.Window = Window;
 
-export default Modal;
+export default ModalOverwarpped;

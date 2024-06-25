@@ -1,11 +1,12 @@
-import { getCabins } from "../../services/apiCabins";
 import { useQuery } from "@tanstack/react-query";
-import Spinner from "../../ui/Spinner";
-import CabinRow from "./CabinRow";
-import Table from "../../ui/Table";
-import Menus from "../../ui/Menus";
 import { useSearchParams } from "react-router-dom";
+
+import { getCabins } from "../../services/apiCabins";
 import Empty from "../../ui/Empty";
+import Menus from "../../ui/Menus";
+import Spinner from "../../ui/Spinner";
+import Table from "../../ui/Table";
+import CabinRow from "./CabinRow";
 
 function CabinTable() {
   //we can use useCabins custom hook

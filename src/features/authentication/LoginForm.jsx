@@ -1,14 +1,31 @@
 import { useState } from "react";
+import styled from "styled-components";
+
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
+import FormRowVertical from "../../ui/FormRowVertical";
 import Input from "../../ui/Input";
 import SpinnerMini from "../../ui/SpinnerMini";
-import FormRowVertical from "../../ui/FormRowVertical";
 import { useLogin } from "./useLogin";
 
+const P = styled.p`
+  color: var(--color-brand-600);
+  font-weight: 600;
+  /* text-align: center; */
+  transition: all 0.3s;
+  background: none;
+  border: none;
+  border-radius: var(--border-radius-sm);
+
+  &:hover,
+  &:active {
+    color: var(--color-brand-200);
+  }
+`;
+
 function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("test01@test.com");
+  const [password, setPassword] = useState("11111111");
   const { login, isLoading } = useLogin();
 
   function handleSubmit(e) {
@@ -27,6 +44,9 @@ function LoginForm() {
 
   return (
     <Form onSubmit={handleSubmit}>
+      <FormRowVertical label="Test userInfo">
+        <P>Test Email: test01@test.com / Password:11111111</P>
+      </FormRowVertical>
       <FormRowVertical label="Email address">
         <Input
           type="email"

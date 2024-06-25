@@ -11,6 +11,28 @@ export async function getGuests() {
   return data;
 }
 
+export async function createEditGuest(newGuest, id) {
+  console.log("ttttttttt", newGuest, id);
+  let query = supabase.from("guests");
+
+  if (!id) query = query.insert([{ ...newGuest }]);
+
+  if (id)
+    query = query
+      .update([{ ...newGuest }])
+      .eq("id", id)
+      .select();
+
+  const { data, error } = await query.select().single();
+
+  if (error) {
+    console.log(error);
+    throw new Error("Guest could not be created or updated");
+  }
+
+  return data;
+}
+
 // export async function deleteCabin(id) {
 //   const { data, error } = await supabase.from("cabins").delete().eq("id", id);
 

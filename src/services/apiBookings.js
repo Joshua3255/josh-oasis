@@ -147,7 +147,7 @@ export async function createEditBooking(newBooking, id) {
   const { data, error } = await query.select().single();
 
   if (error) {
-    console.log("aaaa", error);
+    console.log(error);
     throw new Error("Booking could not be created or updated");
   }
 

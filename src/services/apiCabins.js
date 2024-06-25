@@ -4,8 +4,8 @@ export async function getCabins() {
   let { data, error } = await supabase.from("cabins").select("*");
 
   if (error) {
-    console.log("Cabins could not be loader");
-    throw new Error("Cabins could not be loader");
+    console.log(error);
+    throw new Error("Cabins could not be loaded");
   }
 
   return data;
@@ -29,7 +29,10 @@ export async function createEditCabin(newCabin, id) {
   const hasImagePath = typeof newCabin.image === "string";
 
   //const hasImagePath = newCabin.image.startsWith(supabaseUrl);
-  const imageName = `${Math.random()}-${newCabin.image.name}`.replace("/", "");
+  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
+    "/",
+    ""
+  );
   const imagePath = hasImagePath
     ? newCabin.image
     : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;

@@ -6,14 +6,18 @@ import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import styled from "styled-components";
 
 import Button from "../../ui/Button";
 import Checkbox from "../../ui/Checkbox";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Heading from "../../ui/Heading";
 import Input from "../../ui/Input";
+import Modal from "../../ui/Modal";
+import ModalOverwarpped from "../../ui/ModalOverwarpped";
 import Row from "../../ui/Row";
 import Tag from "../../ui/Tag";
 import Textarea from "../../ui/Textarea";
@@ -113,7 +117,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
   // const [numNights, numGuests] = watch(["numNights", "numGuests"]);
   // console.log("a1", numNights, numGuests);
 
-  console.log("renderCount", ++renderCount);
+  // console.log("renderCount", ++renderCount);
   useEffect(() => {
     // const subscription = watch((data) => {
     //         console.log("watchdata", data);
@@ -151,7 +155,6 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
   function onSubmit(data) {
     delete data.cabins;
     delete data.guests;
-    console.log("dd", data);
     if (isEditSession)
       editBooking(
         { newBookingData: { ...data }, id: editId },
@@ -205,14 +208,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
     setValue("numNights", numOfDays);
   }
 
-  console.log(
-    "booking",
-    booking,
-    "cabinsDropdownlist",
-    cabinsDropdownlist,
-    "guestsDropdownlist",
-    guestsDropdownlist
-  );
+  console.log("booking", booking);
 
   return (
     <>
@@ -222,7 +218,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
             {isEditSession ? `Edit booking #${editId}` : "Create booking"}
           </Heading>
           <Tag type={BOOKINGSTATUS_TO_TAGNAME[booking.status]}>
-            {booking.status.replace("-", " ")}
+            {booking.status?.replace("-", " ")}
           </Tag>
         </HeadingGroup>
       </Row>
@@ -232,7 +228,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
         onSubmit={handleSubmit(onSubmit, onError)}
         type={onCloseModal ? "modal" : "regular"}
       >
-        <FormRow label="Cabin Id" error={errors?.cabinId?.message}>
+        <FormRow label="Cabin" error={errors?.cabinId?.message}>
           <Controller
             name="cabinId"
             control={control}
@@ -254,7 +250,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
           />
         </FormRow>
 
-        <FormRow label="Guest Id" error={errors?.guestId?.message}>
+        <FormRow label="Guest" error={errors?.guestId?.message}>
           <Controller
             name="guestId"
             control={control}
@@ -262,11 +258,11 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
               <Select
                 options={guestsDropdownlist}
                 onChange={(val) => {
-                  handleGuestChange(val.value);
+                  //handleGuestChange(val.value);
                   field.onChange(val.value);
                 }}
                 defaultValue={guestsDropdownlist?.filter(
-                  (guest) => guest.value === booking.guests.id
+                  (guest) => guest.value === booking.guests?.id
                 )}
               />
             )}
@@ -485,7 +481,24 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
         </FormRow>
 
         <FormRow>
-          {/* type is an HTML attribute! */}
+          {isEditSession && (
+            <ModalOverwarpped>
+              <ModalOverwarpped.Open opens="delete2">
+                <Button variation="danger">Delete booking</Button>
+              </ModalOverwarpped.Open>
+              <ModalOverwarpped.Window name="delete2">
+                <ConfirmDelete
+                  resourceName="booking"
+                  // disabled={isDeleting}
+                  onConfirm={() => {
+                    console.log("deleteCOnfirm");
+                    // deleteBooking(bookingId, { onSettled: () => navigate(-1) });
+                  }}
+                />
+              </ModalOverwarpped.Window>
+            </ModalOverwarpped>
+          )}
+
           <Button
             variation="secondary"
             type="reset"
@@ -496,7 +509,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
           <Button disabled={isWorking}>
             {isEditSession ? "Edit booking" : "Create new booking"}
           </Button>
-          <DevTool control={control} />
+          {/* <DevTool control={control} /> */}
         </FormRow>
       </Form>
     </>
