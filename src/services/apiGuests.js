@@ -12,7 +12,12 @@ export async function getGuests() {
 }
 
 export async function createEditGuest(newGuest, id) {
-  console.log("ttttttttt", newGuest, id);
+  [newGuest.nationality, newGuest.countryFlag] =
+    newGuest.nationalityWithFlagImage.split("%");
+  delete newGuest.nationalityWithFlagImage;
+  // newGuest.nationality = newGuest.nationalityWithFlagImage.split("%").at(0);
+  // newGuest.countryFlag = newGuest.nationalityWithFlagImage.split("%").at(1);
+
   let query = supabase.from("guests");
 
   if (!id) query = query.insert([{ ...newGuest }]);
@@ -31,6 +36,18 @@ export async function createEditGuest(newGuest, id) {
   }
 
   return data;
+}
+
+export async function getCountries() {
+  try {
+    const res = await fetch(
+      "https://restcountries.com/v2/all?fields=name,flag"
+    );
+    const countries = await res.json();
+    return countries;
+  } catch {
+    throw new Error("Could not fetch countries");
+  }
 }
 
 // export async function deleteCabin(id) {

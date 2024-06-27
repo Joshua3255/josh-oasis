@@ -1,7 +1,11 @@
 import { DevTool } from "@hookform/devtools";
+import { useQuery } from "@tanstack/react-query";
+import { sl } from "date-fns/locale";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import Select from "react-select";
 
+import { getCountries } from "../../services/apiGuests";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
@@ -12,21 +16,35 @@ import { useCreateGuest } from "./useCreateGuest";
 import { useEditGuest } from "./useEditGuest";
 
 function CreateGuestForm({ guestToEdit = {}, onCloseModal }) {
+  const { isLoading, data: countries } = useQuery({
+    queryKey: ["countries"],
+    queryFn: getCountries,
+  });
+
   const { id: editId, ...editValues } = guestToEdit;
   const { isCreating, createGuest } = useCreateGuest();
   const { isEditing, editGuest } = useEditGuest();
+
+  editValues.nationalityWithFlagImage = `${editValues.nationality}%${editValues.countryFlag}`;
 
   const { register, handleSubmit, reset, formState, control } = useForm({
     defaultValues: editValues,
   });
 
-  const isWorking = isCreating || isEditing;
+  const isWorking = isCreating || isEditing || isLoading;
   const isEditMode = Boolean(editId);
   const { errors } = formState;
 
-  function onSubmit(data) {
-    console.log(data);
+  const countriesDropdownlist = !countries
+    ? []
+    : countries?.map((country) => {
+        return {
+          value: `${country.name}%${country.flag}`,
+          label: country.name,
+        };
+      });
 
+  function onSubmit(data) {
     if (isEditMode) {
       console.log("editmode");
       editGuest(
@@ -49,9 +67,6 @@ function CreateGuestForm({ guestToEdit = {}, onCloseModal }) {
   }
 
   function onError(errors) {}
-
-  console.log("editValues", editValues);
-  console.log("editId", editId);
 
   return (
     <>
@@ -91,7 +106,7 @@ function CreateGuestForm({ guestToEdit = {}, onCloseModal }) {
             />
           </FormRow>
           <FormRow label="Nationality" error={errors?.nationality?.message}>
-            <Input
+            {/* <Input
               type="text"
               id="nationality"
               disabled={isWorking}
@@ -103,6 +118,24 @@ function CreateGuestForm({ guestToEdit = {}, onCloseModal }) {
               defaultValue="https://flagcdn.com/pt.svg"
               disabled={isWorking}
               {...register("countryFlag")}
+            /> */}
+            <Controller
+              name="nationalityWithFlagImage"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  options={countriesDropdownlist}
+                  disabled={isWorking}
+                  onChange={(val) => {
+                    field.onChange(val.value);
+                  }}
+                  defaultValue={countriesDropdownlist.filter(
+                    (country) =>
+                      country.value ===
+                      `${guestToEdit.nationality}%${guestToEdit.countryFlag}`
+                  )}
+                />
+              )}
             />
           </FormRow>
 

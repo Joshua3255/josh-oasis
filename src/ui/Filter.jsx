@@ -47,7 +47,6 @@ function Filter({ filterField, options }) {
   }
   return (
     <StyledFilter>
-      {console.log("option", options)}
       {options.map((option) => (
         <FilterButton
           key={option.value}
