@@ -509,7 +509,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
           <Button disabled={isWorking}>
             {isEditSession ? "Edit booking" : "Create new booking"}
           </Button>
-          <DevTool control={control} />
+          {/* <DevTool control={control} /> */}
         </FormRow>
       </Form>
     </>
