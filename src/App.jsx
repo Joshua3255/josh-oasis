@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import Guests from "./pages/Guests";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
+import Restaurants from "./pages/Restaurants";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import GlobalStyles from "./styles/GlobalStyles";
@@ -51,6 +52,7 @@ function App() {
               <Route path="bookings/:bookingId" element={<Booking />} />
               <Route path="checkin/:bookingId" element={<Checkin />} />
               <Route path="cabins" element={<Cabins />} />
+              <Route path="restaurants" element={<Restaurants />} />
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<Settings />} />
               <Route path="account" element={<Account />} />

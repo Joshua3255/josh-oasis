@@ -4,8 +4,8 @@ export async function getGuests() {
   let { data, error } = await supabase.from("guests").select("*");
 
   if (error) {
-    console.log("Cabins could not be loader");
-    throw new Error("Cabins could not be loader");
+    console.log(error);
+    throw new Error("Guests could not be loader");
   }
 
   return data;

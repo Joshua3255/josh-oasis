@@ -208,8 +208,6 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
     setValue("numNights", numOfDays);
   }
 
-  console.log("booking", booking);
-
   return (
     <>
       <Row type="horizontal">

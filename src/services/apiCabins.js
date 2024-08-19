@@ -23,7 +23,7 @@ export async function deleteCabin(id) {
 }
 
 export async function createEditCabin(newCabin, id) {
-  console.log("a1", newCabin, id);
+  // console.log("a1", newCabin, id);
   //https://hynwatxcksdzrrwbkitu.supabase.co/storage/v1/object/public/cabin-images/cabin-002.jpg
 
   const hasImagePath = typeof newCabin.image === "string";

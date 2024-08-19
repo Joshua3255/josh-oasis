@@ -1,25 +1,24 @@
-import Input from "../../ui/Input";
-import Form from "../../ui/Form";
-import Button from "../../ui/Button";
-import Textarea from "../../ui/Textarea";
-import FormRow from "../../ui/FormRow";
-import Select from "react-select";
-import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
 
-import { Controller, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
+import { differenceInCalendarDays } from "date-fns";
+import { useReducer, useState } from "react";
+import DatePicker from "react-datepicker";
+import { Controller, useForm } from "react-hook-form";
+import Select from "react-select";
+import styled from "styled-components";
+
+import Button from "../../ui/Button";
+import Checkbox from "../../ui/Checkbox";
+import Form from "../../ui/Form";
+import FormRow from "../../ui/FormRow";
+import Input from "../../ui/Input";
+import Textarea from "../../ui/Textarea";
+import { formatCurrency } from "../../utils/helpers";
+import { useCabins } from "../cabins/useCabins";
+import { useSettings } from "../settings/useSettings";
 import { useCreateBooking } from "./useCreateBooking";
 import { useEditBooking } from "./useEditBooking";
-import { useCabins } from "../cabins/useCabins";
-import { useReducer, useState } from "react";
-import { useSettings } from "../settings/useSettings";
-import styled from "styled-components";
-import Checkbox from "../../ui/Checkbox";
-import { formatCurrency } from "../../utils/helpers";
-
-import { differenceInCalendarDays } from "date-fns";
 
 const Box = styled.div`
   /* Box */
@@ -41,7 +40,7 @@ const initialState = {
 };
 
 function reducer(state, action) {
-  console.log("action", action);
+  // console.log("action", action);
 
   // const numDays = (state.startDate && state.endDate)
   switch (action.type) {
@@ -134,7 +133,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
   const optionalBreakfastPrice = breakfastPrice * numGuests * numNights;
   const extrasPrice = hasBreakfast ? optionalBreakfastPrice : 0;
   const totalPrice = cabinId && numNights * cabinPrice + extrasPrice;
-  console.log("recalculated", optionalBreakfastPrice, extrasPrice, totalPrice);
+  // console.log("recalculated", optionalBreakfastPrice, extrasPrice, totalPrice);
 
   const { errors } = formState;
   const isWorking = isCreating || isEditing;
@@ -176,7 +175,7 @@ function CreateBookingForm({ bookingToEdit = {}, onCloseModal }) {
   function setNumNights(toDate, fromDate) {
     const numOfDays =
       toDate && fromDate ? differenceInCalendarDays(toDate, fromDate) : 0;
-    console.log("numOfDays", numOfDays);
+    // console.log("numOfDays", numOfDays);
     dispatch({ type: "setNumNights", payload: numOfDays });
     //setValue("numNights", numOfDays);
   }

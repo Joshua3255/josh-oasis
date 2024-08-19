@@ -1,16 +1,17 @@
-import styled from "styled-components";
-import { format, isToday } from "date-fns";
+import { format, isToday, parseISO } from "date-fns";
+import { useState } from "react";
 import {
   HiOutlineChatBubbleBottomCenterText,
   HiOutlineCheckCircle,
   HiOutlineCurrencyDollar,
   HiOutlineHomeModern,
 } from "react-icons/hi2";
+import styled from "styled-components";
 
+import Checkbox from "../../ui/Checkbox";
 import DataItem from "../../ui/DataItem";
 import { Flag } from "../../ui/Flag";
-
-import { formatDistanceFromNow, formatCurrency } from "../../utils/helpers";
+import { formatCurrency, formatDistanceFromNow } from "../../utils/helpers";
 
 const StyledBookingDataBox = styled.section`
   /* Box */
@@ -103,7 +104,7 @@ const Footer = styled.footer`
 
 // A purely presentational component
 function BookingDataBox({ booking }) {
-  const {
+  let {
     created_at,
     startDate,
     endDate,
@@ -117,7 +118,12 @@ function BookingDataBox({ booking }) {
     isPaid,
     guests: { fullName: guestName, email, country, countryFlag, nationalID },
     cabins: { name: cabinName },
+    totalExtraFees,
+    isExtraFeesPaid,
+    extraFees,
   } = booking;
+
+  isPaid = isExtraFeesPaid ? isPaid : false;
 
   return (
     <StyledBookingDataBox>
@@ -163,14 +169,34 @@ function BookingDataBox({ booking }) {
           {hasBreakfast ? "Yes" : "No"}
         </DataItem>
 
+        {totalExtraFees > 0 && (
+          <DataItem
+            icon={<HiOutlineCheckCircle />}
+            label="Have the additional charges been paid?"
+          >
+            {isExtraFeesPaid ? "Yes" : "No"}
+          </DataItem>
+        )}
+
+        {extraFees.map((extraFee) => (
+          <DataItem key={extraFee.id}>
+            {format(parseISO(extraFee.created_at), "yyyy-MM-dd HH:mm (EEE) ")}
+            &nbsp;&nbsp;
+            <strong>{formatCurrency(extraFee.chargedPrice)}</strong>
+            {extraFee.restaurants.name}
+          </DataItem>
+        ))}
+
         <Price isPaid={isPaid}>
           <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
             {formatCurrency(totalPrice)}
-
-            {hasBreakfast &&
+            {(hasBreakfast || totalExtraFees > 0) &&
               ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(
                 extrasPrice
-              )} breakfast)`}
+              )} breakfast`}
+            {totalExtraFees > 0 &&
+              ` + ${formatCurrency(totalExtraFees)} additional fees`}
+            {hasBreakfast || totalExtraFees > 0 ? ")" : ""}
           </DataItem>
 
           <p>{isPaid ? "Paid" : "Will pay at property"}</p>

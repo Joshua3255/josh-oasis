@@ -21,7 +21,7 @@ function UpdateUserDataForm() {
   const [avatar, setAvatar] = useState(null);
 
   function handleSubmit(e) {
-    console.log(e);
+    // console.log(e);
     e.preventDefault();
     if (!fullName) return null;
     updateUser(

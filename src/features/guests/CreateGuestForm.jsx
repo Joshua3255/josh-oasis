@@ -46,7 +46,6 @@ function CreateGuestForm({ guestToEdit = {}, onCloseModal }) {
 
   function onSubmit(data) {
     if (isEditMode) {
-      console.log("editmode");
       editGuest(
         { newGuestData: data, id: editId },
         {

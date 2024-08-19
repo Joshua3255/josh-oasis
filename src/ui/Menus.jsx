@@ -90,7 +90,7 @@ function Toggle({ id }) {
   function handleClick(e) {
     e.stopPropagation();
 
-    console.log("click", openId, "id", id);
+    // console.log("click", openId, "id", id);
     const rect = e.target.closest("button").getBoundingClientRect();
 
     //console.log("po", window.innerWidth, rect.width, rect.x);

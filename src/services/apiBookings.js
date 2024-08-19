@@ -38,7 +38,7 @@ export async function getBookings({ filter, sortBy, page }) {
 export async function getBooking(id) {
   const { data, error } = await supabase
     .from("bookings")
-    .select("*, cabins(*), guests(*)")
+    .select("*, cabins(*), guests(*), extraFees(*, restaurants(name))")
     .eq("id", id)
     .single();
 
@@ -106,7 +106,6 @@ export async function getStaysTodayActivity() {
 }
 
 export async function updateBooking(id, obj) {
-  console.log("Obj ttt", id, obj);
   const { data, error } = await supabase
     .from("bookings")
     .update(obj)
@@ -118,8 +117,27 @@ export async function updateBooking(id, obj) {
     console.error(error);
     throw new Error("Booking could not be updated");
   }
-  console.log("D1", data);
   return data;
+}
+
+export async function checkOutApi(id, confirmExtraFeesPaid, obj) {
+  if (!confirmExtraFeesPaid) {
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("isExtraFeesPaid")
+      .eq("id", id)
+      .single();
+
+    if (!data.isExtraFeesPaid) {
+      throw new Error(
+        "There are some extra charged fees. Please pay it on the booking detail page before checking out."
+      );
+    }
+  }
+
+  obj.isExtraFeesPaid = true;
+
+  return await updateBooking(id, obj);
 }
 
 export async function deleteBooking(id) {
@@ -152,4 +170,42 @@ export async function createEditBooking(newBooking, id) {
   }
 
   return data;
+}
+
+export async function addExtraFee(newExtraFee) {
+  // 1) insert to ExtarFees table
+  const { data, error } = await supabase
+    .from("extraFees")
+    .insert({ ...newExtraFee });
+
+  if (error) {
+    console.log(error);
+    throw new Error("Extra fee could not be added");
+  }
+
+  // 2) update booking table extra
+  const { data: currentData } = await supabase
+    .from("bookings")
+    .select("totalExtraFees, totalPrice")
+    .eq("id", newExtraFee.bookingId)
+    .single();
+
+  const { data: data2, error: error2 } = await supabase
+    .from("bookings")
+    .update({
+      totalExtraFees:
+        currentData.totalExtraFees + Number(newExtraFee.chargedPrice),
+      totalPrice: currentData.totalPrice + Number(newExtraFee.chargedPrice),
+      isExtraFeesPaid: false,
+    })
+    // .rpc("increment", { e })
+    .eq("id", newExtraFee.bookingId)
+    .select();
+
+  if (error2) {
+    console.log(error2);
+    throw new Error("Extra fee could not be added");
+  }
+
+  return data2;
 }

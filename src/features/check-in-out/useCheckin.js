@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateBooking } from "../../services/apiBookings";
+import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+
+import { updateBooking } from "../../services/apiBookings";
 
 export function useCheckin() {
   const queryClient = useQueryClient();
@@ -17,9 +19,9 @@ export function useCheckin() {
         status: "checked-in",
         isPaid: true,
         ...breakfast,
+        checkInTime: format(Date.now(), "yyyy-MM-dd HH:mm:ss.SSS"),
       }),
     onSuccess: (data) => {
-      console.log("data", data);
       toast.success(`Booking #${data.id} successfully checked in`);
       queryClient.invalidateQueries({ active: true });
       navigate("/");

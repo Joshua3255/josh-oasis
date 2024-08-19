@@ -1,4 +1,5 @@
 import styled from "styled-components";
+
 import Button from "./Button";
 import Heading from "./Heading";
 
@@ -37,7 +38,14 @@ function ConfirmDelete({ resourceName, onConfirm, disabled, onCloseModal }) {
         >
           Cancel
         </Button>
-        <Button variation="danger" disabled={disabled} onClick={onConfirm}>
+        <Button
+          variation="danger"
+          disabled={disabled}
+          onClick={() => {
+            onConfirm();
+            onCloseModal();
+          }}
+        >
           Delete
         </Button>
       </div>

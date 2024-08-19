@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { HiArrowUpOnSquare } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -6,6 +7,7 @@ import { useMoveBack } from "../../hooks/useMoveBack";
 import Button from "../../ui/Button";
 import ButtonGroup from "../../ui/ButtonGroup";
 import ButtonText from "../../ui/ButtonText";
+import Checkbox from "../../ui/Checkbox";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import Empty from "../../ui/Empty";
 import Heading from "../../ui/Heading";
@@ -14,7 +16,9 @@ import Row from "../../ui/Row";
 import Spinner from "../../ui/Spinner";
 import Tag from "../../ui/Tag";
 import { BOOKINGSTATUS_TO_TAGNAME } from "../../utils/constants";
+import { formatCurrency } from "../../utils/helpers";
 import { useCheckout } from "../check-in-out/useCheckout";
+import AddExtraFeesForm from "./AddExtraFeesForm";
 import BookingDataBox from "./BookingDataBox";
 import CreateBookingForm from "./CreateBookingForm";
 import { useBooking } from "./useBooking";
@@ -26,12 +30,22 @@ const HeadingGroup = styled.div`
   align-items: center;
 `;
 
+const Box = styled.div`
+  /* Box */
+  background-color: var(--color-grey-0);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-md);
+  padding: 2.4rem 4rem;
+`;
+
 function BookingDetail() {
   const { booking, isLoading } = useBooking();
   const { checkout, isCheckingout } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
   const moveBack = useMoveBack();
   const navigate = useNavigate();
+
+  const [confirmExtraFeesPaid, setConfirmExtraFeesPaid] = useState(false);
 
   if (isLoading) return <Spinner />;
   if (!booking) return <Empty resourceName="booking" />;
@@ -52,6 +66,27 @@ function BookingDetail() {
 
       <BookingDataBox booking={booking} />
 
+      {!booking.isExtraFeesPaid > 0 && (
+        <Box>
+          <Checkbox
+            checked={confirmExtraFeesPaid}
+            disabled={confirmExtraFeesPaid}
+            onChange={() => setConfirmExtraFeesPaid((confirm) => !confirm)}
+            id="confirm"
+          >
+            I confirm that {booking.guests.fullName} has paid the additional
+            charges ({formatCurrency(booking.totalExtraFees)}){" "}
+            {/* {!addBreakfast
+              ? formatCurrency(totalPrice)
+              : `${formatCurrency(
+                  optionalBreakfastPrice + totalPrice
+                )} (${formatCurrency(totalPrice)} + ${formatCurrency(
+                  optionalBreakfastPrice
+                )}) `} */}
+          </Checkbox>
+        </Box>
+      )}
+
       <ButtonGroup>
         {status === "unconfirmed" && (
           <Button
@@ -65,8 +100,10 @@ function BookingDetail() {
         {status === "checked-in" && (
           <Button
             icon={<HiArrowUpOnSquare />}
-            onClick={() => checkout(bookingId)}
-            disabled={isCheckingout}
+            onClick={() => checkout({ bookingId, confirmExtraFeesPaid })}
+            disabled={
+              isCheckingout || booking.isExtraFeesPaid == confirmExtraFeesPaid
+            }
           >
             Check out
           </Button>
@@ -85,6 +122,9 @@ function BookingDetail() {
 
           {status !== "checked-out" && (
             <>
+              <Modal.Open opens="addExtraFees">
+                <Button variation="secondary">Add Extra fees</Button>
+              </Modal.Open>
               <Modal.Open opens="delete">
                 <Button variation="danger">Delete booking</Button>
               </Modal.Open>
@@ -96,6 +136,9 @@ function BookingDetail() {
                     deleteBooking(bookingId, { onSettled: () => navigate(-1) });
                   }}
                 />
+              </Modal.Window>
+              <Modal.Window name="addExtraFees">
+                <AddExtraFeesForm bookingId={bookingId}></AddExtraFeesForm>
               </Modal.Window>
             </>
           )}

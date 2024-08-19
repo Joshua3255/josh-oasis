@@ -6,6 +6,7 @@ import {
   HiOutlineUser,
   HiOutlineUsers,
 } from "react-icons/hi2";
+import { IoRestaurantOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
@@ -74,6 +75,12 @@ function MainNav() {
           <StyledNavLink to="./cabins">
             <HiOutlineHomeModern />
             <span>Cabins</span>
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to="./restaurants">
+            <IoRestaurantOutline />
+            <span>Restaurants</span>
           </StyledNavLink>
         </li>
         <li>
