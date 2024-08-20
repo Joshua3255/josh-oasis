@@ -112,32 +112,18 @@ function BookingDetail() {
         )}
 
         {status === "checked-out" && (
-          <>
-            <Button
-              icon={<HiArrowUpOnSquare />}
-              onClick={() => {
-                window.open(
-                  `/invoice/${bookingId}`,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }}
-            >
-              See Invoice
-            </Button>
-            <Button
-              icon={<HiArrowUpOnSquare />}
-              onClick={() => {
-                window.open(
-                  `/invoice/${bookingId}`,
-                  "_self",
-                  "noopener,noreferrer"
-                );
-              }}
-            >
-              See Invoice self
-            </Button>
-          </>
+          <Button
+            icon={<HiArrowUpOnSquare />}
+            onClick={() => {
+              window.open(
+                `/invoice/${bookingId}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
+            }}
+          >
+            See Invoice
+          </Button>
         )}
         <Modal>
           {status === "unconfirmed" && (
@@ -151,11 +137,19 @@ function BookingDetail() {
             </>
           )}
 
-          {status !== "checked-out" && (
+          {status === "checked-in" && (
             <>
               <Modal.Open opens="addExtraFees">
                 <Button variation="secondary">Add Extra fees</Button>
               </Modal.Open>
+              <Modal.Window name="addExtraFees">
+                <AddExtraFeesForm bookingId={bookingId}></AddExtraFeesForm>
+              </Modal.Window>
+            </>
+          )}
+
+          {status !== "checked-out" && (
+            <>
               <Modal.Open opens="delete">
                 <Button variation="danger">Delete booking</Button>
               </Modal.Open>
@@ -167,9 +161,6 @@ function BookingDetail() {
                     deleteBooking(bookingId, { onSettled: () => navigate(-1) });
                   }}
                 />
-              </Modal.Window>
-              <Modal.Window name="addExtraFees">
-                <AddExtraFeesForm bookingId={bookingId}></AddExtraFeesForm>
               </Modal.Window>
             </>
           )}

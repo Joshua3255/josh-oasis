@@ -148,7 +148,7 @@ function AddExtraFeesForm({ bookingId, onCloseModal }) {
         >
           Cancel
         </Button>
-        <Button disabled={isWorking}>Charge Extra Fees</Button>
+        <Button disabled={isAdding}>Charge Extra Fees</Button>
       </FormRow>
     </Form>
   );
