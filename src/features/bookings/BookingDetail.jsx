@@ -98,14 +98,27 @@ function BookingDetail() {
         )}
 
         {status === "checked-in" && (
+          <>
+            <Button
+              icon={<HiArrowUpOnSquare />}
+              onClick={() => checkout({ bookingId, confirmExtraFeesPaid })}
+              disabled={
+                isCheckingout || booking.isExtraFeesPaid == confirmExtraFeesPaid
+              }
+            >
+              Check out
+            </Button>
+          </>
+        )}
+
+        {status === "checked-out" && (
           <Button
             icon={<HiArrowUpOnSquare />}
-            onClick={() => checkout({ bookingId, confirmExtraFeesPaid })}
-            disabled={
-              isCheckingout || booking.isExtraFeesPaid == confirmExtraFeesPaid
-            }
+            onClick={() => {
+              window.open(`/invoice/${bookingId}`, "_blank");
+            }}
           >
-            Check out
+            See Invoice
           </Button>
         )}
         <Modal>

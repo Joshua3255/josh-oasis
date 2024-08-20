@@ -1,4 +1,4 @@
-import { isFuture, isPast, isToday } from "date-fns";
+import { addHours, isFuture, isPast, isToday } from "date-fns";
 import { useState } from "react";
 
 import supabase from "../services/supabase";
@@ -30,6 +30,11 @@ async function deleteBookings() {
   if (error) console.log(error.message);
 }
 
+async function deleteExtraFees() {
+  const { error } = await supabase.from("extraFees").delete().gt("id", 0);
+  if (error) console.log(error.message);
+}
+
 async function createGuests() {
   const { error } = await supabase.from("guests").insert(guests);
   if (error) console.log(error.message);
@@ -46,7 +51,7 @@ async function createBookings() {
     .from("guests")
     .select("id")
     .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
+  const allGuestIds = guestsIds.map((guest) => guest.id);
   const { data: cabinsIds } = await supabase
     .from("cabins")
     .select("id")
@@ -64,12 +69,16 @@ async function createBookings() {
       : 0; // hardcoded breakfast price
     const totalPrice = cabinPrice + extrasPrice;
 
-    let status;
+    let status, checkInTime, checkOutTime;
     if (
       isPast(new Date(booking.endDate)) &&
       !isToday(new Date(booking.endDate))
-    )
+    ) {
       status = "checked-out";
+      checkInTime = addHours(new Date(booking.startDate), 12);
+      checkOutTime = addHours(new Date(booking.endDate), 10);
+    }
+
     if (
       isFuture(new Date(booking.startDate)) ||
       isToday(new Date(booking.startDate))
@@ -80,8 +89,10 @@ async function createBookings() {
         isToday(new Date(booking.endDate))) &&
       isPast(new Date(booking.startDate)) &&
       !isToday(new Date(booking.startDate))
-    )
+    ) {
       status = "checked-in";
+      checkInTime = addHours(new Date(booking.startDate), 10);
+    }
 
     return {
       ...booking,
@@ -93,13 +104,91 @@ async function createBookings() {
       guestId: allGuestIds.at(booking.guestId - 1),
       cabinId: allCabinIds.at(booking.cabinId - 1),
       status,
+      checkInTime,
+      checkOutTime,
     };
   });
 
   console.log(finalBookings);
 
-  const { error } = await supabase.from("bookings").insert(finalBookings);
+  const { data: insertedBookings, error } = await supabase
+    .from("bookings")
+    .insert(finalBookings)
+    .select();
   if (error) console.log(error.message);
+
+  // retereive Restaurants list
+  const { data: restaurants, error: restaurantsError } = await supabase
+    .from("restaurants")
+    .select();
+  if (restaurantsError) console.log(restaurantsError.message);
+
+  console.log("++++++", insertedBookings);
+
+  let extraFees = [];
+
+  const checkOutBookings = insertedBookings.filter(
+    (booking) => booking.status === "checked-out"
+  );
+
+  checkOutBookings.forEach((booking) => {
+    let newItem = {
+      numGuests: booking.numGuests,
+      bookingId: booking.id,
+      chargedPrice: booking.numGuests * 25,
+      restaurantId: restaurants[0].id,
+      created_at: addHours(new Date(booking.startDate), 15),
+    };
+    extraFees.push(newItem);
+
+    if (booking.numNights > 1) {
+      newItem = {
+        numGuests: booking.numGuests,
+        bookingId: booking.id,
+        chargedPrice: booking.numGuests * 18,
+        restaurantId: restaurants[1].id,
+        created_at: addHours(new Date(booking.endDate), -3),
+      };
+      extraFees.push(newItem);
+    }
+  });
+
+  console.log(extraFees);
+
+  // totalPrice, totalExtraFees
+
+  const { data: insertedExtraFees, error: extraError } = await supabase
+    .from("extraFees")
+    .insert(extraFees)
+    .select();
+  if (extraError) console.log("ttt", extraError);
+
+  console.log(insertedExtraFees);
+
+  let extraFeesApply = [];
+  checkOutBookings.forEach((booking) => {
+    const totalExtraFees = booking.numGuests * 18 + booking.numGuests * 25;
+    const newItem = {
+      id: booking.id,
+      totalPrice: booking.totalPrice + totalExtraFees,
+      totalExtraFees,
+    };
+    extraFeesApply.push(newItem);
+  });
+
+  console.log("extraFeesApply", extraFeesApply);
+
+  extraFeesApply.forEach(async (update) => {
+    const { id, totalPrice, totalExtraFees } = update;
+    const { data, error } = await supabase
+      .from("bookings")
+      .update({ totalPrice, totalExtraFees })
+      .eq("id", id);
+
+    if (error) {
+      console.log(`Error updating record with ID ${id}`, error);
+    }
+  });
 }
 
 function Uploader() {
@@ -122,6 +211,7 @@ function Uploader() {
 
   async function uploadBookings() {
     setIsLoading(true);
+    await deleteExtraFees();
     await deleteBookings();
     await createBookings();
     setIsLoading(false);

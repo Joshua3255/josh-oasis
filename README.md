@@ -33,10 +33,15 @@ You can explore this by clicking on [The Oasis for Staffs](https://josh-oasis.ve
 
   - Create, read, update, and delete bookings.
   - Check-in and check-out management.
+  - Add restaurant used amount by guests
 
 - **Cabin Management**:
 
   - Manage cabin details and availability.
+
+- **Restaurant Management**:
+
+  - Manage restaurants details and availability.
 
 - **User and Guest Management**:
 

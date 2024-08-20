@@ -13,6 +13,7 @@ import Cabins from "./pages/Cabins";
 import Checkin from "./pages/Checkin";
 import Dashboard from "./pages/Dashboard";
 import Guests from "./pages/Guests";
+import Invoice from "./pages/Invoice";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import Restaurants from "./pages/Restaurants";
@@ -58,6 +59,8 @@ function App() {
               <Route path="account" element={<Account />} />
               <Route path="guests" element={<Guests />} />
             </Route>
+
+            <Route path="invoice/:bookingId" element={<Invoice />} />
 
             <Route path="login" element={<Login />} />
             <Route path="*" element={<PageNotFound />} />

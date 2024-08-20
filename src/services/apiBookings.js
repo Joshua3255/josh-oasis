@@ -1,5 +1,7 @@
+import { format, parseISO } from "date-fns";
+
 import { PAGE_SIZE } from "../utils/constants";
-import { getToday } from "../utils/helpers";
+import { formatCurrency, getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
 export async function getBookings({ filter, sortBy, page }) {
@@ -43,7 +45,7 @@ export async function getBooking(id) {
     .single();
 
   if (error) {
-    console.error("tt", error);
+    console.error("++++++++++", error);
     throw new Error("Booking not found");
   }
 
@@ -208,4 +210,63 @@ export async function addExtraFee(newExtraFee) {
   }
 
   return data2;
+}
+
+export async function getInvoice(bookingId) {
+  const booking = await getBooking(bookingId);
+
+  // if (error) {
+  //   console.error("tt", error);
+  //   throw new Error("Booking not found");
+  // }
+
+  //{format(parseISO(extraFee.created_at), "yyyy-MM-dd HH:mm (EEE) ")}
+
+  const invoiceData = {
+    guestName: booking.guests.fullName,
+    guestEmail: booking.guests.email,
+    numNights: booking.numNights,
+    checkInDate: format(
+      parseISO(booking.checkInTime),
+      "yyyy-MM-dd HH:mm (EEE)"
+    ),
+    checkOutDate: format(
+      parseISO(booking.checkOutTime),
+      "yyyy-MM-dd HH:mm (EEE)"
+    ),
+    items: [
+      {
+        description: "Room Charge",
+        quantity: booking.numNights,
+        unitPrice: booking.cabinPricePerDay,
+        amount: booking.cabinPrice,
+      },
+    ],
+    restaurants: [],
+    totalAmount: booking.totalPrice,
+  };
+
+  if (booking.hasBreakfast) {
+    const newItem = {
+      description: "Breakfast",
+      quantity: booking.numNights,
+      unitPrice: 20,
+      amount: booking.extrasPrice,
+    };
+    invoiceData.items.push(newItem);
+  }
+
+  if (booking.extraFees.length > 0) {
+    booking.extraFees?.forEach((el) => {
+      const newItem = {
+        name: el.restaurants.name,
+        guests: `${el.numGuests} guests`,
+        createdAt: format(parseISO(el.created_at), "yyyy-MM-dd HH:mm (EEE)"),
+        amount: el.chargedPrice,
+      };
+      invoiceData.restaurants.push(newItem);
+    });
+  }
+
+  return invoiceData;
 }
