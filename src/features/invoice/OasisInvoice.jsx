@@ -155,6 +155,7 @@ const OasisInvoiceTemplate = ({ invoiceData }) => (
 );
 
 function OasisInvoice() {
+  console.log("OasisInvoice started");
   const { bookingId } = useParams();
 
   const { isLoading, invoiceData } = useInvoice();
@@ -163,6 +164,8 @@ function OasisInvoice() {
 
   if (isLoading) return <Spinner />;
   if (!invoiceData) return <Empty resourceName="booking" />;
+
+  console.log("OasisInvoice A1");
 
   //Example invoice data
 
@@ -247,6 +250,8 @@ function OasisInvoice() {
     //   console.error("Failed to send email:", error);
     // }
   };
+
+  console.log("OasisInvoice A2");
 
   return (
     <>

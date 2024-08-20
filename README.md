@@ -17,6 +17,8 @@ You can explore this by clicking on [The Oasis for Staffs](https://josh-oasis.ve
 - **React Hot Toast**: Library for notifications
 - **React Hook Form**: Library for form management
 - **Supabase** for User Authentication, DB and File Storage
+- \*\*React-pdf : Library for invocies generation and view
+- \*\*EmailJS : Library for sending invocies by email while checking-out.
 
 ## Application Features
 
@@ -33,7 +35,8 @@ You can explore this by clicking on [The Oasis for Staffs](https://josh-oasis.ve
 
   - Create, read, update, and delete bookings.
   - Check-in and check-out management.
-  - Add restaurant used amount by guests
+  - Add restaurant used amount by guests.
+  - Generate and view invoices with options to print or email the invoices.
 
 - **Cabin Management**:
 
@@ -66,6 +69,8 @@ First, Create Environment Variables
 
   - VITE_SUPABASE_URL={Your Supabase URL}
   - VITE_SUPABASE_KEY={Your Supabase Key}
+  - VITE_EMAILJS_SERVICEID={Your EmailJS ServiceId}
+  - VITE_EMAILJS_PUBLIC_KEY={Your EmailJS Public Key}
 
 Second, Install dependencies:
 

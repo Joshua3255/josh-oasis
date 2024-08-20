@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import OasisInvoice from "../features/invoice/OasisInvoice";
 
 function Invoice() {
