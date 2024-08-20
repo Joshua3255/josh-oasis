@@ -112,14 +112,32 @@ function BookingDetail() {
         )}
 
         {status === "checked-out" && (
-          <Button
-            icon={<HiArrowUpOnSquare />}
-            onClick={() => {
-              window.open(`/invoice/${bookingId}`, "_blank");
-            }}
-          >
-            See Invoice
-          </Button>
+          <>
+            <Button
+              icon={<HiArrowUpOnSquare />}
+              onClick={() => {
+                window.open(
+                  `/invoice/${bookingId}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }}
+            >
+              See Invoice
+            </Button>
+            <Button
+              icon={<HiArrowUpOnSquare />}
+              onClick={() => {
+                window.open(
+                  `/invoice/${bookingId}`,
+                  "_self",
+                  "noopener,noreferrer"
+                );
+              }}
+            >
+              See Invoice self
+            </Button>
+          </>
         )}
         <Modal>
           {status === "unconfirmed" && (
