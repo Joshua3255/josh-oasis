@@ -45,7 +45,7 @@ function LoginForm() {
   return (
     <Form onSubmit={handleSubmit}>
       <FormRowVertical label="Test userInfo">
-        <P>Test Email: test01@test.com / Password:11111111</P>
+        <P>* Default test Id and password are autofilled.</P>
       </FormRowVertical>
       <FormRowVertical label="Email address">
         <Input
